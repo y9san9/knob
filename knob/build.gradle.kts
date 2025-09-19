@@ -11,6 +11,8 @@ group = "me.y9san9.knob"
 version = libs.versions.knob.get()
 
 kotlin {
+    jvmToolchain(8)
+
     explicitApi()
 
     compilerOptions {
