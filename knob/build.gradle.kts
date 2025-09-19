@@ -23,7 +23,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.kotlinx.coroutines)
+    api(libs.kotlinx.coroutines)
 }
 
 mavenPublishing {
