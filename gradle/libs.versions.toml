@@ -1,6 +1,6 @@
 [versions]
 
-knob = "1.0.0-dev002"
+knob = "1.0.0-dev004"
 kotlin = "2.2.0"
 kotlinx-coroutines = "1.10.1"
 maven-publish = "0.29.0"
