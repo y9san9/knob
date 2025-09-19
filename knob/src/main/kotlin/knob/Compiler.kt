@@ -5,12 +5,12 @@ package knob
  */
 public class Compiler(public val name: String = "kotlinc") {
 
-    public suspend fun build(vararg source: String) {
+    public suspend fun build(vararg source: String): String {
         val files = if (source.isEmpty()) {
             arrayOf("**.kt")
         } else {
             source
         }
-        execute(name, *files)
+        return execute(listOf(name) + files)
     }
 }
