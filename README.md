@@ -5,11 +5,11 @@ Kotlin project. No Gradle, no Maven, no Ant, etc. Only Kotlin compiler.
 
 ## This is an Experimental Project
 
-First of all this project was created as a preparation for Stream in
-Kotlin Meta. We will explore Kotlin Scripting and how it works. I'm not sure if
-this is even a good idea myself. This is why I'm implementing it. This is a
-research project. I'm not making any claims about suitability of this approach
-to any project.
+First of all this project was created as a preparation for Stream in [Kotlin
+Meta](https://t.me/kotlinmeta). We will explore Kotlin Scripting and how it
+works. I'm not sure if this is even a good idea myself. This is why I'm
+implementing it. This is a research project. I'm not making any claims about
+suitability of this approach to any project.
 
 ## It's likely Not Suitable for Your Project
 
