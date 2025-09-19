@@ -10,12 +10,12 @@ import kotlinx.coroutines.runBlocking
 public fun knob(
     args: Array<String>,
     compilerName: String = "kotlinc",
-    block: KnobScope.() -> Unit,
+    block: suspend KnobScope.() -> Unit,
 ) {
     runBlocking {
         val compiler = Compiler(compilerName)
         val scope = KnobScope(compiler, args.toList(), scope = this)
-        scope.apply(block)
+        scope.block()
     }
 }
 
