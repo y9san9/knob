@@ -8,4 +8,7 @@ dependencyResolutionManagement {
     }
 }
 
-include("knob")
+include(
+    "knob",
+    "knob-scripting",
+)

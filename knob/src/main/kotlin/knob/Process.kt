@@ -14,7 +14,9 @@ public class Process(private val java: JavaProcess) {
     private val stdoutReader =
         BufferedReader(InputStreamReader(java.getInputStream()))
 
-    public suspend fun readText(): String = stdoutReader.readText()
+    public suspend fun readText(): String? = stdoutReader
+        .readText()
+        .takeIf(String::isNotEmpty)
 
     public suspend fun readlnOrNull(): String? = withContext(Dispatchers.IO) {
         stdoutReader.readLine()
@@ -31,22 +33,33 @@ public class Process(private val java: JavaProcess) {
     public companion object {
         public inline fun start(
             vararg args: String,
+            env: Map<String, String> = emptyMap(),
             block: (Process) -> Unit,
         ) {
             @OptIn(ExperimentalContracts::class)
             contract {
                 callsInPlace(block, EXACTLY_ONCE)
             }
-            start(args.toList(), block)
+            start(args.toList(), env, block)
         }
 
-        public inline fun start(args: List<String>, block: (Process) -> Unit) {
+        public inline fun start(
+            args: List<String>,
+            env: Map<String, String> = emptyMap(),
+            block: (Process) -> Unit,
+        ) {
             @OptIn(ExperimentalContracts::class)
             contract {
                 callsInPlace(block, EXACTLY_ONCE)
             }
             val process = ProcessBuilder(args)
                 .redirectErrorStream(true)
+                .apply {
+                    val environment = environment()
+                    // Why the hell JetBrains uses env variables for this??
+                    environment.remove("KOTLIN_RUNNER")
+                    environment().putAll(env)
+                }
                 .start()
                 .let(::Process)
             try {
@@ -58,10 +71,19 @@ public class Process(private val java: JavaProcess) {
     }
 }
 
-public suspend fun execute(vararg args: String): String = execute(args.toList())
+public suspend fun execute(
+    vararg args: String,
+    env: Map<String, String> = emptyMap(),
+): String? = execute(args.toList(), env)
 
-public suspend fun execute(args: List<String>): String {
-    Process.start(args = args) { process ->
+public suspend fun execute(
+    args: List<String>,
+    env: Map<String, String> = emptyMap(),
+): String? {
+    Process.start(
+        args = args,
+        env = env,
+    ) { process ->
         val text = process.readText()
         check(process.wait() == 0) {
             "Process finished with non-zero exit code: ${process.wait()}\n$text"

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+cd "$parent_path"
+
+cd ..
+
+mkdir custom-scripting/.knob 2>/dev/null
+
+rm -rf custom-scripting/.knob/runtime
+mkdir custom-scripting/.knob/runtime/ 2>/dev/null
+
+./gradlew knob-scripting:installDist -q --console=plain
+
+cp -f -R knob-scripting/build/install/knob-scripting/lib/ custom-scripting/.knob/runtime/
+
+cd custom-scripting
+
+classpath=".knob/runtime/annotations-23.0.0.jar:.knob/runtime/knob-1.0.0-dev006.jar:.knob/runtime/knob-scripting-1.0.0-dev006.jar:.knob/runtime/kotlin-script-runtime-2.2.20.jar:.knob/runtime/kotlin-scripting-common-2.2.20.jar:.knob/runtime/kotlin-scripting-jvm-2.2.20.jar:.knob/runtime/kotlin-stdlib-2.2.20.jar:.knob/runtime/kotlinx-coroutines-core-jvm-1.10.1.jar:.knob/runtime/kotlin-scripting-compiler-embeddable-2.2.20.jar:.knob/runtime/kotlin-scripting-compiler-impl-embeddable-2.2.20.jar:.knob/runtime/kotlin-scripting-jvm-host-2.2.20.jar"
+
+# classpath=".knob/runtime/knob-scripting-1.0.0-dev006.jar"
+
+kotlinc -classpath "$classpath" -script knob.kts -- "$@"
+
+# kotlin -jar knob-scripting.jar

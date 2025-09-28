@@ -7,37 +7,35 @@ import kotlinx.coroutines.runBlocking
  * [knob] is used to access Knob DSL. This DSL is intended to help with
  * bootstrapping your project.
  */
-public fun knob(
-    args: Array<String>,
-    compilerName: String = "kotlinc",
-    block: suspend KnobScope.() -> Unit,
-) {
+public fun setup(args: List<String>, block: suspend Knob.() -> Unit) {
     runBlocking {
-        val compiler = Compiler(compilerName)
-        val scope = KnobScope(compiler, args.toList(), scope = this)
+        val scope = Knob(args, scope = this)
         scope.block()
     }
 }
 
 /**
- * [KnobScope] defined main methods that one may want to use to bootstrap
- * project compilation / running.
+ * [knob] is used to access Knob DSL. This DSL is intended to help with
+ * bootstrapping your project.
  */
-public class KnobScope(
-    public val compiler: Compiler,
-    public val args: List<String>,
-    scope: CoroutineScope,
-) : CoroutineScope by scope {
-
-    public inline fun on(name: String, block: CommandScope.() -> Unit) {
-        if (args[0] == name) {
-            val command = CommandScope(args.drop(1))
-            block(command)
-        }
-    }
+public fun setup(args: Array<String>, block: suspend Knob.() -> Unit) {
+    setup(args.toList(), block)
 }
 
 /**
- * [CommandScope] overrides args from [KnobScope] by stripping command name.
+ * [Knob] defined main methods that one may want to use to bootstrap
+ * project compilation / running.
+ */
+public class Knob(
+    public val args: List<String>,
+    scope: CoroutineScope,
+    public val kotlin: Kotlin = Kotlin("kotlin"),
+    public val kotlinc: Kotlinc = Kotlinc("kotlinc"),
+) : CoroutineScope by scope {
+    public val command: String? = args.getOrNull(0)
+}
+
+/**
+ * [CommandScope] overrides args from [Knob] by stripping command name.
  */
 public class CommandScope(public val args: List<String>)
